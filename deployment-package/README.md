@@ -3,19 +3,26 @@
 ## What's Included
 - **Frontend**: Complete React app with 5,950 speech therapy centers
 - **Backend**: Express.js server with AI insights
-- **Database**: PostgreSQL schema ready
+- **Database**: PostgreSQL dump with all clinic data (2MB)
 - **Features**: Interactive map, filtering, analytics dashboard
+- **Auto-setup**: Database imports automatically on first deploy
 
 ## Deploy in 2 Minutes
 
-### Railway (Recommended)
+### Railway (Recommended - Auto Database)
 ```bash
-# 1. Upload this folder to GitHub
+# 1. Upload this folder to GitHub (or drag to Railway)
 # 2. Go to railway.app
-# 3. Click "Deploy from GitHub"
-# 4. Select this repository
+# 3. Click "Deploy from GitHub" or drag this folder
+# 4. Railway automatically creates PostgreSQL and imports data
 # 5. Your app will be live at: [your-app].up.railway.app
 ```
+
+**Railway automatically:**
+- Creates PostgreSQL database
+- Sets DATABASE_URL environment variable  
+- Imports all 5,950 clinics during deployment
+- Provides permanent URL
 
 ### Vercel
 ```bash
