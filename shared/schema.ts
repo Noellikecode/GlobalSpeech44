@@ -26,6 +26,8 @@ export const clinics = pgTable("clinics", {
   email: text("email"),
   notes: text("notes"),
   verified: boolean("verified").notNull().default(false),
+  rating: real("rating"),
+  reviewsCount: integer("reviews_count").default(0),
   submittedBy: text("submitted_by").notNull(),
   submitterEmail: text("submitter_email").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

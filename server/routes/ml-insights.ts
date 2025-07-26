@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { GeospatialOptimizer, type GeospatialInsight, type CoverageAnalysis, type RetentionClinic } from '../ml-geospatial-optimizer.js';
 import { DataEnhancer, type ClinicEnhancement } from '../ml-data-enhancer.js';
+import { db } from '../db.js';
+import { clinics } from '@shared/schema';
+import { desc, eq } from 'drizzle-orm';
 
 const router = Router();
 
@@ -143,6 +146,43 @@ async function updateInsightsCache() {
     console.log(`✅ Cache updated in ${Date.now() - startTime}ms`);
   } catch (error) {
     console.error('Cache update failed:', error);
+  }
+}
+
+// Fetch real top-rated clinics from database
+async function getTopRatedClinicsByState(state: string, limit: number = 3) {
+  try {
+    const topClinics = await db
+      .select({
+        id: clinics.id,
+        name: clinics.name,
+        city: clinics.city,
+        state: clinics.state,
+        rating: clinics.rating,
+        reviewsCount: clinics.reviewsCount,
+        verified: clinics.verified,
+        services: clinics.services,
+        teletherapy: clinics.teletherapy
+      })
+      .from(clinics)
+      .where(eq(clinics.state, state))
+      .orderBy(desc(clinics.rating))
+      .limit(limit);
+
+    return topClinics.map((clinic, index) => ({
+      id: clinic.id,
+      name: clinic.name,
+      city: clinic.city,
+      rating: clinic.rating ? parseFloat(clinic.rating.toFixed(2)) : 4.0,
+      reviewCount: clinic.reviewsCount || 0,
+      tier: clinic.verified ? (clinic.rating && clinic.rating > 4.7 ? 'Platinum' : 'Gold') : 'Bronze',
+      specialties: Array.isArray(clinic.services) ? clinic.services.slice(0, 3) : ['Speech Therapy'],
+      teletherapy: clinic.teletherapy || false,
+      verified: clinic.verified
+    }));
+  } catch (error) {
+    console.error('Error fetching top-rated clinics:', error);
+    return [];
   }
 }
 
@@ -360,16 +400,19 @@ router.get('/api/ml/insights', async (req, res) => {
       try {
         const optimizer = new GeospatialOptimizer();
         const stateRetentionClinics = await optimizer.getHighestRetentionClinicsByState(state as string);
-        console.log(`Found ${stateRetentionClinics.length} retention clinics for ${state}`);
+        const topRatedClinics = await getTopRatedClinicsByState(state as string, 3);
+        
+        console.log(`Found ${stateRetentionClinics.length} retention clinics and ${topRatedClinics.length} top-rated clinics for ${state}`);
         
         const stateSpecificInsights = await generateStateSpecificInsights(state as string);
-        // Add real ML data for retention clinics
+        // Add real database data
         (stateSpecificInsights.data as any).highestRetentionClinics = stateRetentionClinics;
-        console.log('Added retention clinics to state insights');
+        (stateSpecificInsights.data as any).topRatedCenters = topRatedClinics;
+        console.log('Added retention and top-rated clinics to state insights');
         res.json(stateSpecificInsights);
         return;
       } catch (error) {
-        console.error('Error getting state-specific retention clinics:', error);
+        console.error('Error getting state-specific clinic data:', error);
         // Fallback to standard state insights
         const stateSpecificInsights = await generateStateSpecificInsights(state as string);
         res.json(stateSpecificInsights);
