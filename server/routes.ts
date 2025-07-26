@@ -5,7 +5,8 @@ import { insertClinicSchema, insertSubmissionSchema } from "@shared/schema";
 import { z } from "zod";
 import { npiService } from "./npi-service";
 import { getCoordinates } from "@shared/utils";
-import mlInsightsRouter from "./routes/ml-insights";
+// Disabled for deployment stability - AI routes cause memory leaks
+// import mlInsightsRouter from "./routes/ml-insights";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get all verified clinics
@@ -229,50 +230,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Mount ML insights routes with proper error handling
-  app.use(mlInsightsRouter);
+  // ML insights routes disabled for deployment stability
+  // app.use(mlInsightsRouter);
   
-  // Fallback ML insights endpoint for deployment compatibility
+  // ML insights completely disabled for deployment stability
   app.get('/api/ml/insights', async (req, res) => {
-    try {
-      // Return enhanced insights with highest retention rate clinics
-      const insights = {
-        state: "California",
-        totalClinics: 5950,
-        coverage: {
-          totalCoverage: 89.2,
-          stateRanking: 1,
-          densityScore: 94.1,
-          accessibilityRating: "Excellent"
-        },
-        highestRetentionClinics: await (async () => {
-          try {
-            const optimizer = new (await import('./ml-geospatial-optimizer.js')).GeospatialOptimizer();
-            const analysis = await optimizer.analyzeGeospatialCoverage();
-            return analysis.highestRetentionClinics.slice(0, 3);
-          } catch (error) {
-            console.error('Error getting retention clinics:', error);
-            return [];
-          }
-        })(),
-        recommendations: [
-          "Connect with highest-rated centers for best practices",
-          "Increase teletherapy coverage in Central Valley",
-          "Add specialized pediatric services in San Diego"
-        ]
-      };
-      
-      res.json({
-        success: true,
-        data: insights
-      });
-    } catch (error) {
-      console.error('ML insights error:', error);
-      res.status(500).json({
-        success: false,
-        error: 'ML insights temporarily unavailable'
-      });
-    }
+    res.json({
+      success: false,
+      error: 'ML insights disabled for deployment performance'
+    });
   });
 
   const httpServer = createServer(app);

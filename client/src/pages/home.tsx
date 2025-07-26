@@ -8,7 +8,8 @@ import { Globe, MapPin, Users } from "lucide-react";
 import MinimalMap from "@/components/map/minimal-map";
 import ClinicModal from "@/components/modals/clinic-modal";
 import SimpleWelcomeModal from "@/components/modals/simple-welcome-modal";
-import MLInsightsDashboard from "@/components/ml/ml-insights-dashboard";
+// Disabled for deployment stability - AI insights cause memory leaks
+// import MLInsightsDashboard from "@/components/ml/ml-insights-dashboard";
 import { Clinic } from "@/types/clinic";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -18,7 +19,7 @@ export default function Home() {
   const [selectedClinic, setSelectedClinic] = useState<Clinic | null>(null);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(true);
   const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
-  const [isMlInsightsVisible, setIsMlInsightsVisible] = useState(false);
+  // const [isMlInsightsVisible, setIsMlInsightsVisible] = useState(false);
   const [filters, setFilters] = useState({
     costLevel: "all",
     services: "all",
@@ -333,15 +334,8 @@ export default function Home() {
         onClose={() => setSelectedClinic(null)}
       />
 
-      {/* ML Insights Dashboard - Only show after map loads and welcome modal is closed */}
-      {!isLoading && !isWelcomeModalOpen && (
-        <MLInsightsDashboard
-          filteredClinics={filteredClinics}
-          filters={filters}
-          isVisible={true}
-          onToggle={() => setIsMlInsightsVisible(!isMlInsightsVisible)}
-        />
-      )}
+      {/* ML Insights Dashboard disabled for deployment stability */}
+      {/* Memory leak issues resolved by removing AI components */}
 
 
     </div>
