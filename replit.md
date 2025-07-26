@@ -9,6 +9,7 @@ The Speech Access Map is a full-stack web application that provides an interacti
 Preferred communication style: Simple, everyday language.
 Deployment priority: High - User needs continuous uptime for NSA public website
 Data integrity requirement: Must use only authentic, verifiable healthcare provider data
+Developer credit: Display "Developed by Noel Thomas" with email link (noelsimonthomas31@gmail.com) at bottom of screen
 
 ## System Architecture
 
