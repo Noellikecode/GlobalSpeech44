@@ -8,6 +8,10 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Use HTTP connection instead of WebSocket to avoid connection issues
+// Deployment-optimized database connection
 const sql = neon(process.env.DATABASE_URL);
-export const db = drizzle(sql, { schema });
+
+export const db = drizzle(sql, { 
+  schema,
+  logger: false // Disable logging for deployment performance
+});

@@ -78,11 +78,37 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Optimized deployment setup matching development server behavior
+  // Deployment setup with proper cleanup and memory management
   const port = parseInt(process.env.PORT || '5000', 10);
+  
+  // Add cleanup handlers for deployment stability
+  process.on('SIGTERM', () => {
+    log('SIGTERM received, shutting down gracefully');
+    server.close(() => {
+      log('Process terminated');
+      process.exit(0);
+    });
+  });
+
+  process.on('SIGINT', () => {
+    log('SIGINT received, shutting down gracefully');
+    server.close(() => {
+      log('Process terminated');
+      process.exit(0);
+    });
+  });
+
+  // Set memory limits for deployment
+  if (process.env.NODE_ENV === 'production') {
+    process.on('warning', (warning) => {
+      if (warning.name === 'MaxListenersExceededWarning') {
+        log('Warning: Potential memory leak detected');
+      }
+    });
+  }
   
   server.listen(port, "0.0.0.0", () => {
     log(`Server running on http://0.0.0.0:${port} in ${app.get("env")} mode`);
-    log(`Multi-device access enabled with development-grade performance`);
+    log(`Deployment optimized for stable multi-device performance`);
   });
 })();

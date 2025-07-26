@@ -28,10 +28,25 @@ export default function Home() {
   const { data: clinics = [], isLoading } = useQuery({
     queryKey: ["/api/clinics"],
     queryFn: async () => {
-      const res = await fetch("/api/clinics");
-      if (!res.ok) throw new Error("Failed to fetch clinics");
-      return res.json();
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+      
+      try {
+        const res = await fetch("/api/clinics", { 
+          signal: controller.signal,
+          headers: { 'Cache-Control': 'no-cache' } 
+        });
+        clearTimeout(timeoutId);
+        if (!res.ok) throw new Error("Failed to fetch clinics");
+        return res.json();
+      } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+      }
     },
+    staleTime: 30000, // 30 seconds instead of 5 minutes for deployment
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   const { data: analytics } = useQuery({

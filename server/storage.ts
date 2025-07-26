@@ -41,9 +41,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getVerifiedClinics(): Promise<Clinic[]> {
+    // Deployment optimization: limit results and use efficient query
     return await db.select().from(clinics)
       .where(eq(clinics.verified, true))
-      .orderBy(desc(clinics.createdAt));
+      .orderBy(desc(clinics.createdAt))
+      .limit(2000); // Prevent memory overload in deployment
   }
 
   async createClinic(clinic: InsertClinic & { latitude: number; longitude: number; submittedBy: string }): Promise<Clinic> {
