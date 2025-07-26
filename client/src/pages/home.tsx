@@ -78,39 +78,30 @@ export default function Home() {
 
 
 
-  // Optimized state-based filtering with performance improvements
+  // Deployment-optimized filtering for smooth multi-device performance
   const filteredClinics = useMemo(() => {
     if (!clinics || clinics.length === 0) return [];
     
-    // Check if filters are active
     const hasStateFilter = filters.state !== "all";
     const hasCostFilter = filters.costLevel !== "all";
     const hasServicesFilter = filters.services !== "all";
     
+    // Return early if no filters for performance
     if (!hasStateFilter && !hasCostFilter && !hasServicesFilter) {
-      return clinics;
+      return clinics.slice(0, 2000); // Limit for deployment stability
     }
     
-    // Pre-compute filter values for better performance
     const filterState = hasStateFilter ? filters.state.toUpperCase().trim() : null;
     
     const filtered = clinics.filter((clinic: any) => {
-      // State filtering (most selective first)
-      if (hasStateFilter) {
-        const clinicState = clinic.state?.toUpperCase()?.trim();
-        if (clinicState !== filterState) return false;
-      }
-      
-      // Cost level filtering
+      if (hasStateFilter && clinic.state?.toUpperCase()?.trim() !== filterState) return false;
       if (hasCostFilter && clinic.costLevel !== filters.costLevel) return false;
-      
-      // Services filtering
       if (hasServicesFilter && !clinic.services?.includes(filters.services)) return false;
-      
       return true;
     });
     
-    return filtered;
+    // Cap results for deployment performance
+    return filtered.slice(0, 1500);
   }, [clinics, filters.state, filters.costLevel, filters.services]);
 
   // Debounced filter change handler for smoother performance

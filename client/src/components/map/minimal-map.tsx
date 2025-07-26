@@ -96,44 +96,35 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading }
 
         console.log(`Adding ${validClinics.length} markers to map`);
 
-        // Add markers in chunks for better performance
-        const chunkSize = 100;
-        let currentIndex = 0;
+        // Deployment-optimized marker management
+        const maxMarkers = 1500; // Limit for deployment stability
+        const displayClinics = validClinics.slice(0, maxMarkers);
         
-        const addMarkerChunk = () => {
-          const chunk = validClinics.slice(currentIndex, currentIndex + chunkSize);
+        // Batch marker creation for smooth deployment performance
+        const createMarkers = () => {
+          const markers = [];
           
-          chunk.forEach(clinic => {
-            // Create custom marker without shadows
-            const customIcon = L.divIcon({
-              className: 'leaflet-style-marker',
-              html: `<div class="marker-pin"></div>`,
-              iconSize: [25, 41],
-              iconAnchor: [12, 41],
-              popupAnchor: [1, -34]
-            });
-            
-            const marker = L.marker([clinic.latitude, clinic.longitude], { icon: customIcon })
-              .addTo(map)
-              .bindPopup(`<strong>${clinic.name}</strong><br/>${clinic.city}`)
+          displayClinics.forEach(clinic => {
+            // Lightweight marker for deployment
+            const marker = L.marker([clinic.latitude, clinic.longitude])
+              .bindPopup(`<strong>${clinic.name}</strong><br/>${clinic.city}`, {
+                maxWidth: 200,
+                closeButton: true
+              })
               .on('click', () => {
-                // Center the popup on screen when clinic is clicked
-                map.setView([clinic.latitude, clinic.longitude], Math.max(map.getZoom(), 12), {
-                  animate: true,
-                  duration: 0.5
-                });
+                map.setView([clinic.latitude, clinic.longitude], Math.max(map.getZoom(), 12));
                 onClinicClick(clinic);
               });
+            
+            markers.push(marker);
+            marker.addTo(map);
           });
           
-          currentIndex += chunkSize;
-          
-          if (currentIndex < validClinics.length && currentIndex < 2000) {
-            setTimeout(addMarkerChunk, 10); // Small delay between chunks
-          }
+          return markers;
         };
         
-        addMarkerChunk();
+        const markers = createMarkers();
+        console.log(`Deployment: Added ${markers.length} markers successfully`);
 
         // Fit to markers if any exist - use sample for performance
         if (validClinics.length > 0) {

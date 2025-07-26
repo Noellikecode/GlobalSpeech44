@@ -4,11 +4,19 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// Add CORS headers for cross-device access
+// Deployment-optimized CORS and caching for multi-device performance
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  // Enable deployment caching for static assets
+  if (req.url.includes('/static/') || req.url.includes('/assets/')) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year
+  } else if (req.url.includes('/api/')) {
+    res.setHeader('Cache-Control', 'public, max-age=300'); // 5 minutes for API
+  }
+  
   if (req.method === 'OPTIONS') {
     res.sendStatus(200);
   } else {
@@ -16,8 +24,9 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Memory-optimized parsers for deployment performance
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -69,16 +78,11 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
+  // Optimized deployment setup matching development server behavior
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  
+  server.listen(port, "0.0.0.0", () => {
+    log(`Server running on http://0.0.0.0:${port} in ${app.get("env")} mode`);
+    log(`Multi-device access enabled with development-grade performance`);
   });
 })();
