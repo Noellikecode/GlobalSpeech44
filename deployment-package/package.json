@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "node start.js",
     "build": "echo 'Build already completed'",
     "db:setup": "node setup-database.js",
     "postinstall": "echo 'Production build ready'"
