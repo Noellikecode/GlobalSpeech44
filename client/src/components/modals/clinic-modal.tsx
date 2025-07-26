@@ -1,8 +1,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Video, Phone, Mail, Globe, ArrowDownRight, Flag, CheckCircle } from "lucide-react";
+import { MapPin, Video, Phone, Mail, Globe, Flag, CheckCircle } from "lucide-react";
 import { Clinic } from "@/types/clinic";
+import { useState } from "react";
 
 interface ClinicModalProps {
   clinic: Clinic | null;
@@ -11,6 +12,8 @@ interface ClinicModalProps {
 }
 
 export default function ClinicModal({ clinic, isOpen, onClose }: ClinicModalProps) {
+  const [showThankYou, setShowThankYou] = useState(false);
+  
   if (!clinic) return null;
 
   const getCostLevelColor = (costLevel: string) => {
@@ -31,9 +34,11 @@ export default function ClinicModal({ clinic, isOpen, onClose }: ClinicModalProp
     }
   };
 
-  const handleGetDirections = () => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${clinic.latitude},${clinic.longitude}`;
-    window.open(url, '_blank');
+  const handleReportIssue = () => {
+    setShowThankYou(true);
+    setTimeout(() => {
+      setShowThankYou(false);
+    }, 3000);
   };
 
   return (
@@ -153,15 +158,18 @@ export default function ClinicModal({ clinic, isOpen, onClose }: ClinicModalProp
           </div>
 
           {/* Action Buttons */}
-          <div className="border-t pt-4 flex space-x-3">
-            <Button onClick={handleGetDirections} className="flex-1">
-              <ArrowDownRight className="mr-2 h-4 w-4" />
-              Get ArrowDownRight
-            </Button>
-            <Button variant="outline">
-              <Flag className="mr-2 h-4 w-4" />
-              Report Issue
-            </Button>
+          <div className="border-t pt-4 flex justify-center">
+            {showThankYou ? (
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <p className="text-green-700 font-medium">Thank you for your feedback!</p>
+                <p className="text-green-600 text-sm mt-1">We appreciate you helping us improve our directory.</p>
+              </div>
+            ) : (
+              <Button variant="outline" onClick={handleReportIssue}>
+                <Flag className="mr-2 h-4 w-4" />
+                Report Issue
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>
