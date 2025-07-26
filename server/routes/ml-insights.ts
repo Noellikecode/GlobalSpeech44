@@ -4,6 +4,7 @@ import { DataEnhancer, type ClinicEnhancement } from '../ml-data-enhancer.js';
 import { db } from '../db.js';
 import { clinics } from '@shared/schema';
 import { desc, eq } from 'drizzle-orm';
+import { authenticDataService } from '../authentic-data-service.js';
 
 const router = Router();
 
@@ -149,46 +150,30 @@ async function updateInsightsCache() {
   }
 }
 
-// Fetch real top-rated clinics from database - only those with authentic ratings
+// Fetch authentic verified clinics using legitimate data sources
 async function getTopRatedClinicsByState(state: string, limit: number = 3) {
   try {
-    const topClinics = await db
-      .select({
-        id: clinics.id,
-        name: clinics.name,
-        city: clinics.city,
-        state: clinics.state,
-        rating: clinics.rating,
-        reviewsCount: clinics.reviewsCount,
-        verified: clinics.verified,
-        services: clinics.services,
-        teletherapy: clinics.teletherapy
-      })
-      .from(clinics)
-      .where(eq(clinics.state, state))
-      .orderBy(desc(clinics.verified), desc(clinics.name)) // Order by verified status, then alphabetically
-      .limit(limit);
-
-    // Only return clinics with authentic ratings, otherwise return empty array
-    const authenticClinics = topClinics.filter(clinic => clinic.rating && clinic.rating > 0);
+    // Use authentic data service to get verified providers
+    const authenticClinics = await authenticDataService.getAuthenticTopClinics(state, limit);
     
     if (authenticClinics.length === 0) {
-      return []; // No authentic ratings available
+      return []; // No verified providers available for this state
     }
 
     return authenticClinics.map((clinic, index) => ({
       id: clinic.id,
       name: clinic.name,
       city: clinic.city,
-      rating: clinic.rating ? parseFloat(clinic.rating.toFixed(1)) : null,
-      reviewCount: clinic.reviewsCount || 0,
-      tier: clinic.verified ? 'Verified' : 'Unverified',
-      specialties: Array.isArray(clinic.services) ? clinic.services.slice(0, 3) : ['Speech Therapy'],
-      teletherapy: clinic.teletherapy || false,
-      verified: clinic.verified
+      verified: clinic.verified,
+      tier: clinic.verified ? 'Verified Provider' : 'Listed Provider',
+      specialties: clinic.services,
+      teletherapy: clinic.teletherapy,
+      contactAvailable: clinic.hasContact,
+      contactMethods: clinic.contactMethods,
+      dataSource: 'Provider Database'
     }));
   } catch (error) {
-    console.error('Error fetching top-rated clinics:', error);
+    console.error('Error fetching authentic clinic data:', error);
     return [];
   }
 }

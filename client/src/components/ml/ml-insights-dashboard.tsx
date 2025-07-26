@@ -185,25 +185,27 @@ export default function MLInsightsDashboard({
                                     'bg-gray-100 text-gray-800'
                                   }`}
                                 >
-                                  {center.verified ? 'Verified' : 'Listed'}
+                                  {center.tier || 'Listed'}
                                 </Badge>
-                                {center.rating && (
-                                  <>
-                                    <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                                    <span className="text-xs font-bold text-purple-600">{center.rating}</span>
-                                  </>
+                                {center.contactAvailable && (
+                                  <div className="flex items-center space-x-1">
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    <span className="text-xs text-blue-600">Contact Info</span>
+                                  </div>
                                 )}
                               </div>
                             </div>
                             <h4 className="font-medium text-xs text-gray-900 mb-1 truncate">{center.name}</h4>
-                            <p className="text-xs text-gray-600">{center.city} • {center.verified ? 'Verified Provider' : 'Contact to verify services'}</p>
+                            <p className="text-xs text-gray-600">
+                              {center.city} • {center.contactMethods ? center.contactMethods.join(', ') : 'Contact to verify services'}
+                            </p>
                           </div>
                         ))}
                       </div>
                     ) : (
                       <div className="text-center p-3">
-                        <div className="text-sm text-gray-600">Rating data unavailable</div>
-                        <div className="text-xs text-gray-500 mt-1">Contact centers directly to verify quality</div>
+                        <div className="text-sm text-gray-600">Verified providers unavailable</div>
+                        <div className="text-xs text-gray-500 mt-1">Check state licensing boards for verification</div>
                       </div>
                     )}
                   </div>
