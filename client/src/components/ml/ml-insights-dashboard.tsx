@@ -170,7 +170,7 @@ export default function MLInsightsDashboard({
                   <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-3 rounded-lg border border-purple-200">
                     <div className="flex items-center space-x-2 mb-2">
                       <Star className="h-4 w-4 text-purple-600" />
-                      <span className="text-xs font-medium text-purple-800">Top 3 Best Rated in {insights.state || 'US'}</span>
+                      <span className="text-xs font-medium text-purple-800">Featured Centers in {insights.state || 'US'}</span>
                     </div>
                     {(insights.topRatedCenters && insights.topRatedCenters.length > 0) ? (
                       <div className="space-y-2">
@@ -179,27 +179,31 @@ export default function MLInsightsDashboard({
                             <div className="flex items-center justify-between mb-1">
                               <div className="flex items-center space-x-1">
                                 <Badge 
-                                  variant={center.tier === 'Platinum' ? 'default' : 'secondary'}
+                                  variant={center.verified ? 'default' : 'secondary'}
                                   className={`text-xs ${
-                                    center.tier === 'Platinum' ? 'bg-purple-100 text-purple-800' : 
-                                    'bg-yellow-100 text-yellow-800'
+                                    center.verified ? 'bg-green-100 text-green-800' : 
+                                    'bg-gray-100 text-gray-800'
                                   }`}
                                 >
-                                  #{index + 1}
+                                  {center.verified ? 'Verified' : 'Listed'}
                                 </Badge>
-                                <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                                <span className="text-xs font-bold text-purple-600">{center.rating}</span>
+                                {center.rating && (
+                                  <>
+                                    <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                                    <span className="text-xs font-bold text-purple-600">{center.rating}</span>
+                                  </>
+                                )}
                               </div>
                             </div>
                             <h4 className="font-medium text-xs text-gray-900 mb-1 truncate">{center.name}</h4>
-                            <p className="text-xs text-gray-600">{center.city} • {center.reviewCount} reviews</p>
+                            <p className="text-xs text-gray-600">{center.city} • {center.verified ? 'Verified Provider' : 'Contact to verify services'}</p>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div>
-                        <div className="text-lg font-bold text-purple-600">4.8⭐</div>
-                        <div className="text-xs text-purple-600">average rating</div>
+                      <div className="text-center p-3">
+                        <div className="text-sm text-gray-600">Rating data unavailable</div>
+                        <div className="text-xs text-gray-500 mt-1">Contact centers directly to verify quality</div>
                       </div>
                     )}
                   </div>

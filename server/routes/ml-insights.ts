@@ -149,7 +149,7 @@ async function updateInsightsCache() {
   }
 }
 
-// Fetch real top-rated clinics from database
+// Fetch real top-rated clinics from database - only those with authentic ratings
 async function getTopRatedClinicsByState(state: string, limit: number = 3) {
   try {
     const topClinics = await db
@@ -166,16 +166,23 @@ async function getTopRatedClinicsByState(state: string, limit: number = 3) {
       })
       .from(clinics)
       .where(eq(clinics.state, state))
-      .orderBy(desc(clinics.rating))
+      .orderBy(desc(clinics.verified), desc(clinics.name)) // Order by verified status, then alphabetically
       .limit(limit);
 
-    return topClinics.map((clinic, index) => ({
+    // Only return clinics with authentic ratings, otherwise return empty array
+    const authenticClinics = topClinics.filter(clinic => clinic.rating && clinic.rating > 0);
+    
+    if (authenticClinics.length === 0) {
+      return []; // No authentic ratings available
+    }
+
+    return authenticClinics.map((clinic, index) => ({
       id: clinic.id,
       name: clinic.name,
       city: clinic.city,
-      rating: clinic.rating ? parseFloat(clinic.rating.toFixed(2)) : 4.0,
+      rating: clinic.rating ? parseFloat(clinic.rating.toFixed(1)) : null,
       reviewCount: clinic.reviewsCount || 0,
-      tier: clinic.verified ? (clinic.rating && clinic.rating > 4.7 ? 'Platinum' : 'Gold') : 'Bronze',
+      tier: clinic.verified ? 'Verified' : 'Unverified',
       specialties: Array.isArray(clinic.services) ? clinic.services.slice(0, 3) : ['Speech Therapy'],
       teletherapy: clinic.teletherapy || false,
       verified: clinic.verified
