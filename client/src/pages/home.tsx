@@ -8,8 +8,7 @@ import { Globe, MapPin, Users } from "lucide-react";
 import MinimalMap from "@/components/map/minimal-map";
 import ClinicModal from "@/components/modals/clinic-modal";
 import SimpleWelcomeModal from "@/components/modals/simple-welcome-modal";
-// Disabled for deployment stability - AI insights cause memory leaks
-// import MLInsightsDashboard from "@/components/ml/ml-insights-dashboard";
+import SimpleInsights from "@/components/insights/simple-insights";
 import { Clinic } from "@/types/clinic";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -334,8 +333,14 @@ export default function Home() {
         onClose={() => setSelectedClinic(null)}
       />
 
-      {/* ML Insights Dashboard disabled for deployment stability */}
-      {/* Memory leak issues resolved by removing AI components */}
+      {/* Lightweight Insights - No memory leaks */}
+      {!isLoading && !isWelcomeModalOpen && (
+        <SimpleInsights
+          filteredClinics={filteredClinics}
+          allClinics={clinics}
+          filters={filters}
+        />
+      )}
 
 
     </div>
