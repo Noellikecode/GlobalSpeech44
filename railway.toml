@@ -1,9 +1,0 @@
-[build]
-command = "npm run build"
-
-[deploy]
-startCommand = "node build/server.js"
-healthcheckPath = "/"
-
-[env]
-NODE_ENV = "production"
