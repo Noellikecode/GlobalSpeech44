@@ -36,18 +36,13 @@ export default function MLInsightsDashboard({
   const [isExpanded, setIsExpanded] = useState(true);
   const [currentState, setCurrentState] = useState(filters.state);
 
-  // Force refresh when state filter changes or component mounts
+  // Only refresh when state filter changes (not on every mount)
   useEffect(() => {
     if (currentState !== filters.state) {
       setCurrentState(filters.state);
       queryClient.invalidateQueries({ queryKey: ["/api/ml/insights"] });
     }
   }, [filters.state, currentState]);
-
-  // Force refresh on mount to show latest data
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["/api/ml/insights"] });
-  }, []);
 
   const { data: mlInsights, isLoading: mlLoading } = useQuery({
     queryKey: ["/api/ml/insights", filters.state],
@@ -57,12 +52,12 @@ export default function MLInsightsDashboard({
       if (!res.ok) throw new Error("Failed to fetch ML insights");
       return res.json();
     },
-    refetchInterval: 30000, // Refresh every 30 seconds  
+    refetchInterval: false, // Disable auto-refresh to prevent memory leaks
     retry: 1, // Only retry once
-    staleTime: 0, // Always fetch fresh data
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes to reduce requests
     enabled: isVisible, // Only fetch when dashboard is visible
-    refetchOnMount: true, // Always fetch fresh data when component mounts
-    refetchOnWindowFocus: true, // Refresh when window gains focus
+    refetchOnMount: false, // Prevent unnecessary refetches
+    refetchOnWindowFocus: false, // Disable window focus refetch
   });
 
   if (!isVisible) return null;
