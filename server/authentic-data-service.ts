@@ -11,38 +11,23 @@ export class AuthenticDataService {
   /**
    * Fetch provider ratings from CMS Provider Data Catalog
    * https://data.cms.gov/provider-data/
+   * Note: Disabled for deployment stability - use database verification instead
    */
   async fetchCMSProviderRatings(npiNumber: string) {
-    try {
-      // CMS Provider Data API endpoint
-      const response = await fetch(`https://data.cms.gov/provider-data/api/1/datastore/query/mj5m-pzi6/0?conditions%5B0%5D%5Bproperty%5D=npi&conditions%5B0%5D%5Bvalue%5D=${npiNumber}`);
-      
-      if (!response.ok) return null;
-      
-      const data = await response.json();
-      return data.results?.[0] || null;
-    } catch (error) {
-      console.error('CMS API error:', error);
-      return null;
-    }
+    // Commented out external API calls that cause deployment timeouts
+    // Use database verification instead for production deployment
+    return null;
   }
 
   /**
    * Fetch provider quality data from NPPES NPI Registry
    * https://npiregistry.cms.hhs.gov/
+   * Note: Disabled for deployment stability - use database verification instead
    */
   async fetchNPPESProviderData(npiNumber: string) {
-    try {
-      const response = await fetch(`https://npiregistry.cms.hhs.gov/api/results?number=${npiNumber}`);
-      
-      if (!response.ok) return null;
-      
-      const data = await response.json();
-      return data.results?.[0] || null;
-    } catch (error) {
-      console.error('NPPES API error:', error);
-      return null;
-    }
+    // Commented out external API calls that cause deployment timeouts
+    // Use database verification instead for production deployment
+    return null;
   }
 
   /**
