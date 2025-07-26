@@ -43,16 +43,16 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading }
         
         await cssLoaded;
 
-        // Configure Leaflet icons with proper defaults
+        // Configure Leaflet icons without shadows
         delete (L.Icon.Default.prototype as any)._getIconUrl;
         L.Icon.Default.mergeOptions({
           iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
           iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+          shadowUrl: '', // Remove shadow completely
           iconSize: [25, 41],
           iconAnchor: [12, 41],
           popupAnchor: [1, -34],
-          shadowSize: [41, 41]
+          shadowSize: [0, 0] // No shadow size
         });
 
         // Create map with explicit container dimensions
@@ -105,8 +105,20 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading }
           const markers = [];
           
           displayClinics.forEach(clinic => {
-            // Lightweight marker for deployment
-            const marker = L.marker([clinic.latitude, clinic.longitude])
+            // Create shadowless marker icon
+            const shadowlessIcon = L.icon({
+              iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+              iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+              shadowUrl: '', // No shadow
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [0, 0] // No shadow
+            });
+            
+            const marker = L.marker([clinic.latitude, clinic.longitude], { 
+              icon: shadowlessIcon 
+            })
               .bindPopup(`<strong>${clinic.name}</strong><br/>${clinic.city}`, {
                 maxWidth: 200,
                 closeButton: true
