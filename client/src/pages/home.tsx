@@ -343,7 +343,7 @@ export default function Home() {
       )}
 
       {/* Developer Credit */}
-      <div className="fixed bottom-4 left-4 z-40">
+      <div className="fixed bottom-4 right-4 z-40" style={{ marginRight: '90px' }}>
         <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-sm border text-xs text-gray-600">
           Developed by{" "}
           <a 
