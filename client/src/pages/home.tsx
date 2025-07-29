@@ -342,8 +342,8 @@ export default function Home() {
         />
       )}
 
-      {/* Developer Credit */}
-      <div className="fixed bottom-4 left-4 z-40">
+      {/* Developer Credit & Admin Links */}
+      <div className="fixed bottom-4 left-4 z-40 space-y-2">
         <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-sm border text-xs text-gray-600">
           Developed by{" "}
           <a 
@@ -351,6 +351,14 @@ export default function Home() {
             className="text-blue-600 hover:text-blue-800 underline font-medium"
           >
             Noel Thomas
+          </a>
+        </div>
+        <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-sm border text-xs">
+          <a 
+            href="/validation" 
+            className="text-purple-600 hover:text-purple-800 underline font-medium"
+          >
+            Geographic Validation
           </a>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { npiService } from "./npi-service";
 import { getCoordinates } from "@shared/utils";
 // Disabled for deployment stability - AI routes cause memory leaks
 // import mlInsightsRouter from "./routes/ml-insights";
+import validationRoutes from "./routes/validation";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get all verified clinics
@@ -230,6 +231,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Geographic validation routes
+  app.use('/api/validation', validationRoutes);
+  
   // ML insights routes disabled for deployment stability
   // app.use(mlInsightsRouter);
   
