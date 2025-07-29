@@ -124,7 +124,10 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading }
                 closeButton: true
               })
               .on('click', () => {
-                map.setView([clinic.latitude, clinic.longitude], Math.max(map.getZoom(), 12));
+                // Gentle zoom - only zoom if currently zoomed out, max zoom level 8
+                const currentZoom = map.getZoom();
+                const targetZoom = Math.min(Math.max(currentZoom, 6), 8);
+                map.setView([clinic.latitude, clinic.longitude], targetZoom);
                 onClinicClick(clinic);
               });
             
