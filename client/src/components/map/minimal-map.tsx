@@ -205,7 +205,7 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading }
       )}
       
       {mapLoaded && (
-        <div className="absolute top-4 left-4 bg-white rounded p-2 shadow-lg z-20">
+        <div className="absolute top-4 right-4 bg-white rounded p-2 shadow-lg z-20">
           <div className="text-sm font-medium">Speech Therapy Centers</div>
           <div className="text-xs text-gray-600">{filteredClinics.length} locations</div>
         </div>
