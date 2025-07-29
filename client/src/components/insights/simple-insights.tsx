@@ -89,7 +89,7 @@ export default function SimpleInsights({ filteredClinics, allClinics, filters }:
   }, [filteredClinics, allClinics, filters.state]);
 
   return (
-    <div className="fixed bottom-4 right-4 w-80 z-50">
+    <div className="fixed bottom-20 right-4 w-80 z-50">
       <Card className="bg-white/95 backdrop-blur-sm shadow-lg border">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-3">
