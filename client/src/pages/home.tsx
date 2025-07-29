@@ -65,6 +65,7 @@ export default function Home() {
 
   const handleApplyFilters = useCallback((newFilters: any) => {
     setFilters(newFilters);
+    setPendingFilters(newFilters); // Also update pending filters for UI sync
     setHasAppliedFilters(true);
   }, []);
 

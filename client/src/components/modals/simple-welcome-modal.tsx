@@ -21,7 +21,13 @@ export default function SimpleWelcomeModal({ isOpen, onClose, onApplyFilters, to
   };
 
   const handleApplyFilters = () => {
-    onApplyFilters(filters);
+    // Remove teletherapy from filters since it's not supported in main filtering
+    const cleanFilters = {
+      costLevel: filters.costLevel,
+      services: filters.services,
+      state: filters.state
+    };
+    onApplyFilters(cleanFilters);
     onClose();
   };
 
