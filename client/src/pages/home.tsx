@@ -101,11 +101,42 @@ export default function Home() {
     const hasCostFilter = filters.costLevel !== "all";
     const hasServicesFilter = filters.services !== "all";
     
-    const filterState = hasStateFilter ? filters.state.toUpperCase().trim() : null;
-    
     // Filter based on criteria
     let filtered = clinics.filter((clinic: any) => {
-      if (hasStateFilter && clinic.state?.toUpperCase()?.trim() !== filterState) return false;
+      // Handle state filtering - match both full name and abbreviation
+      if (hasStateFilter) {
+        const clinicState = clinic.state?.trim();
+        const filterState = filters.state;
+        
+        // Create state mappings for abbreviations
+        const stateMap: Record<string, string[]> = {
+          'California': ['California', 'CA', 'california', 'ca'],
+          'New York': ['New York', 'NY', 'new york', 'ny'],
+          'Texas': ['Texas', 'TX', 'texas', 'tx'],
+          'Florida': ['Florida', 'FL', 'florida', 'fl'],
+          'Illinois': ['Illinois', 'IL', 'illinois', 'il'],
+          'Georgia': ['Georgia', 'GA', 'georgia', 'ga'],
+          'North Carolina': ['North Carolina', 'NC', 'north carolina', 'nc'],
+          'Pennsylvania': ['Pennsylvania', 'PA', 'pennsylvania', 'pa'],
+          'Ohio': ['Ohio', 'OH', 'ohio', 'oh'],
+          'Michigan': ['Michigan', 'MI', 'michigan', 'mi'],
+          'New Jersey': ['New Jersey', 'NJ', 'new jersey', 'nj'],
+          'Colorado': ['Colorado', 'CO', 'colorado', 'co'],
+          'Virginia': ['Virginia', 'VA', 'virginia', 'va'],
+          'Washington': ['Washington', 'WA', 'washington', 'wa'],
+          'Arizona': ['Arizona', 'AZ', 'arizona', 'az'],
+          'Tennessee': ['Tennessee', 'TN', 'tennessee', 'tn'],
+          'Indiana': ['Indiana', 'IN', 'indiana', 'in'],
+          'Massachusetts': ['Massachusetts', 'MA', 'massachusetts', 'ma'],
+          'Maryland': ['Maryland', 'MD', 'maryland', 'md'],
+          'Missouri': ['Missouri', 'MO', 'missouri', 'mo'],
+          // Add more as needed
+        };
+        
+        const validStates = stateMap[filterState] || [filterState];
+        if (!validStates.includes(clinicState)) return false;
+      }
+      
       if (hasCostFilter && clinic.costLevel !== filters.costLevel) return false;
       if (hasServicesFilter && !clinic.services?.includes(filters.services)) return false;
       return true;
@@ -370,13 +401,17 @@ export default function Home() {
         onClose={() => setSelectedClinic(null)}
       />
 
-      {/* Lightweight Insights - No memory leaks */}
+      {/* ML Analytics Section - Moved to bottom */}
       {!isLoading && !isWelcomeModalOpen && (
-        <SimpleInsights
-          filteredClinics={filteredClinics}
-          allClinics={clinics}
-          filters={filters}
-        />
+        <div className="bg-white border-t px-4 py-6">
+          <div className="max-w-7xl mx-auto">
+            <SimpleInsights
+              filteredClinics={filteredClinics}
+              allClinics={clinics}
+              filters={filters}
+            />
+          </div>
+        </div>
       )}
 
       {/* Developer Credit */}
