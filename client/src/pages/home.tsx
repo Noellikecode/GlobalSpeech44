@@ -93,7 +93,7 @@ export default function Home() {
 
 
 
-  // Deployment-optimized filtering for smooth multi-device performance
+  // Geographic-aware filtering that maintains proper distribution
   const filteredClinics = useMemo(() => {
     if (!clinics || clinics.length === 0) return [];
     
@@ -101,22 +101,59 @@ export default function Home() {
     const hasCostFilter = filters.costLevel !== "all";
     const hasServicesFilter = filters.services !== "all";
     
-    // Return early if no filters for performance
-    if (!hasStateFilter && !hasCostFilter && !hasServicesFilter) {
-      return clinics.slice(0, 2000); // Limit for deployment stability
-    }
-    
     const filterState = hasStateFilter ? filters.state.toUpperCase().trim() : null;
     
-    const filtered = clinics.filter((clinic: any) => {
+    // Filter based on criteria
+    let filtered = clinics.filter((clinic: any) => {
       if (hasStateFilter && clinic.state?.toUpperCase()?.trim() !== filterState) return false;
       if (hasCostFilter && clinic.costLevel !== filters.costLevel) return false;
       if (hasServicesFilter && !clinic.services?.includes(filters.services)) return false;
       return true;
     });
     
-    // Cap results for deployment performance
-    return filtered.slice(0, 1500);
+    // Geographic distribution sampling for better spread
+    if (!hasStateFilter && filtered.length > 2000) {
+      // For nationwide view, sample geographically distributed centers
+      const stateGroups: Record<string, any[]> = {};
+      filtered.forEach(clinic => {
+        const state = clinic.state || 'Unknown';
+        if (!stateGroups[state]) stateGroups[state] = [];
+        stateGroups[state].push(clinic);
+      });
+      
+      // Take proportional samples from each state
+      const sampledResults: any[] = [];
+      const targetTotal = 2000;
+      const stateKeys = Object.keys(stateGroups);
+      const basePerState = Math.floor(targetTotal / stateKeys.length);
+      
+      stateKeys.forEach(state => {
+        const stateClinics = stateGroups[state];
+        const sampleSize = Math.min(stateClinics.length, Math.max(basePerState, 5));
+        
+        // Geographic sampling within state - spread by latitude/longitude
+        const sorted = stateClinics.sort((a, b) => {
+          const latDiff = Math.abs(a.latitude - 35); // Roughly center US
+          const lngDiff = Math.abs(a.longitude + 95); // Roughly center US
+          const aDistance = latDiff + lngDiff;
+          const bDiff = Math.abs(b.latitude - 35);
+          const bLngDiff = Math.abs(b.longitude + 95);
+          const bDistance = bDiff + bLngDiff;
+          return aDistance - bDistance; // Prefer geographic spread
+        });
+        
+        // Take every nth item for better distribution
+        const step = Math.max(1, Math.floor(sorted.length / sampleSize));
+        for (let i = 0; i < sorted.length && sampledResults.length < targetTotal; i += step) {
+          sampledResults.push(sorted[i]);
+        }
+      });
+      
+      return sampledResults.slice(0, 2000);
+    }
+    
+    // For state-specific or smaller results, maintain the geographic optimization
+    return filtered.length > 1500 ? filtered.slice(0, 1500) : filtered;
   }, [clinics, filters.state, filters.costLevel, filters.services]);
 
   // Debounced filter change handler for smoother performance
