@@ -433,7 +433,7 @@ export default function InteractiveMap({ clinics, filteredClinics, onClinicClick
             Ready to Find Speech Therapy Centers?
           </h3>
           <p className="text-gray-600 mb-4">
-            Use the filters above to discover speech therapy resources from our database of 5,969+ accurately positioned centers across the United States.
+            Use the filters above to discover speech therapy resources from our database of 5,941+ precisely positioned centers across the United States.
           </p>
           <p className="text-sm text-gray-500">
             Filter by cost level, services, or region to get started.
