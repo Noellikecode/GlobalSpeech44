@@ -356,22 +356,71 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="flex items-center space-x-4 text-sm text-gray-600">
-            <span className="flex items-center">
-              <MapPin className="text-primary mr-1 h-4 w-4" />
-              {filteredClinics.length === clinics.length 
-                ? `${filteredClinics.length} Total Centers` 
-                : `${filteredClinics.length} of ${clinics.length} Centers`}
-            </span>
-            {hasAppliedFilters && filteredClinics.length < clinics.length && (
-              <span className="text-blue-600 text-xs bg-blue-50 px-2 py-1 rounded">
-                Filters Applied
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4 text-sm text-gray-600">
+              <span className="flex items-center">
+                <MapPin className="text-primary mr-1 h-4 w-4" />
+                {filteredClinics.length === clinics.length 
+                  ? `${filteredClinics.length} Total Centers` 
+                  : `${filteredClinics.length} of ${clinics.length} Centers`}
               </span>
+              <span className="flex items-center">
+                <Users className="text-green-500 mr-1 h-4 w-4" />
+                {analytics?.totalViews || 0} Views
+              </span>
+            </div>
+            
+            {/* Active Filters Display */}
+            {hasAppliedFilters && (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-500">Active Filters:</span>
+                <div className="flex space-x-2">
+                  {filters.state !== "all" && (
+                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full flex items-center">
+                      State: {filters.state}
+                      <button 
+                        onClick={() => handleFilterChange("state", "all")}
+                        className="ml-1 text-blue-600 hover:text-blue-800"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {filters.costLevel !== "all" && (
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center">
+                      Cost: {filters.costLevel === "low-cost" ? "Low Cost" : "Market Rate"}
+                      <button 
+                        onClick={() => handleFilterChange("costLevel", "all")}
+                        className="ml-1 text-green-600 hover:text-green-800"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {filters.services !== "all" && (
+                    <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full flex items-center">
+                      Service: {filters.services.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      <button 
+                        onClick={() => handleFilterChange("services", "all")}
+                        className="ml-1 text-purple-600 hover:text-purple-800"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  <button 
+                    onClick={() => {
+                      setFilters({ costLevel: "all", services: "all", state: "all" });
+                      setPendingFilters({ costLevel: "all", services: "all", state: "all" });
+                      setHasAppliedFilters(false);
+                    }}
+                    className="text-xs text-gray-500 hover:text-gray-700 underline"
+                  >
+                    Clear All
+                  </button>
+                </div>
+              </div>
             )}
-            <span className="flex items-center">
-              <Users className="text-green-500 mr-1 h-4 w-4" />
-              {analytics?.totalViews || 0} Views
-            </span>
           </div>
         </div>
       </div>
