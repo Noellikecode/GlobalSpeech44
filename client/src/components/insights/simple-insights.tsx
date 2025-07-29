@@ -61,7 +61,7 @@ export default function SimpleInsights({ filteredClinics, allClinics, filters }:
     
     // AI-driven coverage prediction
     const coverage = filters.state === 'all' 
-      ? Math.round((total / 5941) * 100)
+      ? Math.round((total / 5906) * 100)
       : Math.round((filtered / (stateStats[filters.state] || 1)) * 100);
     
     // ML recommendation engine
