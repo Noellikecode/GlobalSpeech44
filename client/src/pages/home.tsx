@@ -240,7 +240,7 @@ export default function Home() {
                 <Globe className="text-white h-5 w-5" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">North American Speech Access App</h1>
+                <h1 className="text-xl font-semibold text-gray-900">GlobalSpeech</h1>
                 <p className="text-sm text-gray-500">Speech therapy resources across North America</p>
               </div>
             </div>

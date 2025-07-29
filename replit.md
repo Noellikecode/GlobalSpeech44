@@ -1,8 +1,8 @@
-# Speech Access Map
+# GlobalSpeech
 
 ## Overview
 
-The Speech Access Map is a full-stack web application that provides an interactive map to help users find speech therapy clinics and resources across North America. The application features real-time data visualization, comprehensive search and filtering capabilities, and machine learning-powered insights for optimal clinic placement and coverage analysis. Currently hosts **5,906+ verified speech therapy centers** nationwide with insanely precise geographic positioning, optimal distribution, and authentic provider data.
+GlobalSpeech is a full-stack web application that provides an interactive map to help users find speech therapy clinics and resources across North America. The application features real-time data visualization, comprehensive search and filtering capabilities, and machine learning-powered insights for optimal clinic placement and coverage analysis. Currently hosts **5,906+ verified speech therapy centers** nationwide with insanely precise geographic positioning, optimal distribution, and authentic provider data.
 
 ## User Preferences
 

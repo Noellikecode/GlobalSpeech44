@@ -67,7 +67,7 @@ export default function SimpleWelcomeModal({ isOpen, onClose, onApplyFilters, to
       <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Welcome to Speech Access App</h2>
+            <h2 className="text-xl font-semibold mb-2">Welcome to GlobalSpeech</h2>
             <p className="text-gray-600">{totalClinics}+ verified centers across North America</p>
           </div>
 
