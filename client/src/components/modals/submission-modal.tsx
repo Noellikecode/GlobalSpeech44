@@ -358,8 +358,12 @@ export default function SubmissionModal({ isOpen, onClose }: SubmissionModalProp
                 className="bg-green-600 hover:bg-green-700"
                 disabled={submitMutation.isPending}
               >
-                {submitMutation.isPending ? "Submitting..." : "Submit for Review"}
+                {submitMutation.isPending ? "Submitting..." : "Submit Center"}
               </Button>
+            </div>
+            
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
+              <p><strong>Note:</strong> Your submission will be reviewed and added to the map within 24-48 hours. You'll receive an email confirmation once approved.</p>
             </div>
           </form>
         </div>
