@@ -8,6 +8,8 @@ import { Globe, MapPin, Users } from "lucide-react";
 import MinimalMap from "@/components/map/minimal-map";
 import ClinicModal from "@/components/modals/clinic-modal";
 import SimpleWelcomeModal from "@/components/modals/simple-welcome-modal";
+import SubmissionModal from "@/components/modals/submission-modal";
+import AdminPanel from "@/components/admin/admin-panel";
 import SimpleInsights from "@/components/insights/simple-insights";
 import { Clinic } from "@/types/clinic";
 import { apiRequest } from "@/lib/queryClient";
@@ -18,6 +20,8 @@ export default function Home() {
   const [selectedClinic, setSelectedClinic] = useState<Clinic | null>(null);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(true);
   const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
+  const [isSubmissionModalOpen, setIsSubmissionModalOpen] = useState(false);
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
   // const [isMlInsightsVisible, setIsMlInsightsVisible] = useState(false);
   const [filters, setFilters] = useState({
     costLevel: "all",
@@ -248,6 +252,23 @@ export default function Home() {
               <div className="text-sm text-gray-600">
                 {clinics.length > 0 && `${clinics.length} Centers`}
               </div>
+              <div className="flex items-center space-x-2">
+                <Button 
+                  onClick={() => setIsSubmissionModalOpen(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm"
+                >
+                  + Add Center
+                </Button>
+                {/* Admin button - only visible in dev/admin mode */}
+                <Button 
+                  onClick={() => setIsAdminPanelOpen(true)}
+                  variant="outline"
+                  className="px-3 py-2 text-xs"
+                  title="Admin Panel"
+                >
+                  ⚙️
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -400,6 +421,16 @@ export default function Home() {
         clinic={selectedClinic}
         isOpen={!!selectedClinic}
         onClose={() => setSelectedClinic(null)}
+      />
+
+      <SubmissionModal 
+        isOpen={isSubmissionModalOpen}
+        onClose={() => setIsSubmissionModalOpen(false)}
+      />
+
+      <AdminPanel 
+        isOpen={isAdminPanelOpen}
+        onClose={() => setIsAdminPanelOpen(false)}
       />
 
       {/* ML Analytics Section - Moved to bottom */}

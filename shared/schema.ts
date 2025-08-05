@@ -74,8 +74,8 @@ export const insertClinicSchema = createInsertSchema(clinics).omit({
   updatedAt: true,
   latitude: true,
   longitude: true,
-  submittedBy: true,
 }).extend({
+  address: z.string().min(1, "Address is required"), // For geocoding
   services: z.array(z.string()).min(1, "At least one service must be selected"),
   costLevel: z.enum(["free", "low-cost", "market-rate"]),
   submitterEmail: z.string().email("Invalid email address"),

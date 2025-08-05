@@ -1,6 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import submissionsRouter from "./routes/submissions";
+import adminRouter from "./routes/admin";
 import { insertClinicSchema, insertSubmissionSchema } from "@shared/schema";
 import { z } from "zod";
 import { npiService } from "./npi-service";

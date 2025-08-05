@@ -136,6 +136,19 @@ Developer credit: Display "Developed by Noel Thomas" with email link (noelsimont
 
 ## Recent Changes (January 2025)
 
+### User Submission System (January 30, 2025)
+- **New Feature**: Added comprehensive user submission system for new speech therapy centers
+- **Submission Modal**: Complete form with all required fields (name, address, services, contact info, etc.)
+- **Admin Panel**: Full admin interface for reviewing and approving/rejecting submissions
+- **Geocoding Integration**: Automatic coordinate generation from addresses using Nominatim API
+- **Database Schema**: Extended with submissions table and admin workflow
+- **State Validation**: Comprehensive US state selection with proper validation
+- **Service Categories**: Pre-defined service options (speech therapy, language therapy, voice therapy, etc.)
+- **Cost Level Options**: Free, low-cost, and market-rate categorization
+- **Admin Access**: Admin panel accessible via gear icon in top-right corner
+- **Approval Workflow**: Centers only appear on map after admin approval
+- **Quality Control**: All submissions geocoded and validated before display
+
 ### Geographic Accuracy and Position Optimization
 - **January 29, 2025**: Enhanced database accuracy from 6,365 to **5,906 insanely precise speech therapy centers**
 - **Coordinate Precision**: Removed 58 centers with invalid coordinates outside US bounds
