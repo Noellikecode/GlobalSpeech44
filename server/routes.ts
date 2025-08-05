@@ -1,8 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import submissionsRouter from "./routes/submissions";
-import adminRouter from "./routes/admin";
+// import submissionsRouter from "./routes/submissions";
+// import adminRouter from "./routes/admin";
 import { insertClinicSchema, insertSubmissionSchema } from "@shared/schema";
 import { z } from "zod";
 import { npiService } from "./npi-service";
@@ -55,40 +55,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Submit new clinic for review
-  app.post("/api/clinics", async (req, res) => {
+  app.post("/api/submissions", async (req, res) => {
     try {
+      console.log("Received submission:", req.body);
       const validatedData = insertClinicSchema.parse(req.body);
       
+      // Simple coordinates from city/state (we'll improve this with proper geocoding)
       const [latitude, longitude] = await getCoordinates(validatedData.city, validatedData.country);
       
       const clinicData = {
         ...validatedData,
         latitude,
         longitude,
-        submittedBy: validatedData.submitterEmail,
+        submittedBy: validatedData.submittedBy,
+        submitterEmail: validatedData.submitterEmail,
+        verified: false, // Needs admin approval
       };
       
       const clinic = await storage.createClinic(clinicData);
+      console.log("Created clinic:", clinic.id);
       
       // Create submission record
-      await storage.createSubmission({
+      const submission = await storage.createSubmission({
         clinicId: clinic.id,
         status: "pending",
       });
+      console.log("Created submission:", submission.id);
       
       res.status(201).json({ 
-        message: "Clinic submitted for review",
-        clinicId: clinic.id 
+        message: "Submission received successfully",
+        submissionId: submission.id 
       });
     } catch (error) {
+      console.error("Submission error:", error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ 
           message: "Validation error",
           errors: error.errors 
         });
       }
-      console.error("Error creating clinic:", error);
-      res.status(500).json({ message: "Failed to submit clinic" });
+      res.status(500).json({ message: "Failed to process submission" });
     }
   });
 
