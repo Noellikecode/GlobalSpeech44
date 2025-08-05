@@ -8,7 +8,7 @@ import { Globe, MapPin, Users } from "lucide-react";
 import MinimalMap from "@/components/map/minimal-map";
 import ClinicModal from "@/components/modals/clinic-modal";
 import SimpleWelcomeModal from "@/components/modals/simple-welcome-modal";
-import SubmissionModal from "@/components/modals/submission-modal";
+import FeaturesVoteModal from "@/components/modals/features-vote-modal";
 import SimpleInsights from "@/components/insights/simple-insights";
 import { Clinic } from "@/types/clinic";
 import { apiRequest } from "@/lib/queryClient";
@@ -19,7 +19,7 @@ export default function Home() {
   const [selectedClinic, setSelectedClinic] = useState<Clinic | null>(null);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(true);
   const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
-  const [isSubmissionModalOpen, setIsSubmissionModalOpen] = useState(false);
+  const [isFeaturesVoteModalOpen, setIsFeaturesVoteModalOpen] = useState(false);
   // const [isMlInsightsVisible, setIsMlInsightsVisible] = useState(false);
   const [filters, setFilters] = useState({
     costLevel: "all",
@@ -251,7 +251,7 @@ export default function Home() {
                 {clinics.length > 0 && `${clinics.length} Centers`}
               </div>
               <Button 
-                onClick={() => setIsSubmissionModalOpen(true)}
+                onClick={() => setIsFeaturesVoteModalOpen(true)}
                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm"
               >
                 + Add Center
@@ -410,9 +410,9 @@ export default function Home() {
         onClose={() => setSelectedClinic(null)}
       />
 
-      <SubmissionModal 
-        isOpen={isSubmissionModalOpen}
-        onClose={() => setIsSubmissionModalOpen(false)}
+      <FeaturesVoteModal 
+        isOpen={isFeaturesVoteModalOpen}
+        onClose={() => setIsFeaturesVoteModalOpen(false)}
       />
 
       {/* ML Analytics Section - Moved to bottom */}

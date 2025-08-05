@@ -137,15 +137,13 @@ Developer credit: Display "Developed by Noel Thomas" with email link (noelsimont
 ## Recent Changes (January 2025)
 
 ### User Submission System (January 30, 2025)
-- **New Feature**: Added comprehensive user submission system for new speech therapy centers
-- **Submission Modal**: Complete form with all required fields (name, address, services, contact info, etc.)
-- **Manual Review Process**: Submissions sent to admin email for review and approval
-- **Geocoding Integration**: Automatic coordinate generation from addresses
-- **State Validation**: Comprehensive US state selection with proper validation
-- **Service Categories**: Pre-defined service options (speech therapy, language therapy, voice therapy, etc.)
-- **Cost Level Options**: Free, low-cost, and market-rate categorization
-- **Quality Control**: All submissions reviewed manually before being added to map
-- **User Feedback**: Clear messaging about 24-48 hour review timeline
+- **New Feature**: Integrated features.vote platform via embedded modal
+- **Modal Interface**: "Add Center" button opens modal with embedded features.vote iframe
+- **External Submission**: Users submit new centers through features.vote platform within the modal
+- **Seamless Experience**: Modal overlay provides context while using external submission system
+- **Review Process**: Submissions handled through features.vote platform for tracking and approval
+- **User Interface**: Large modal (max-width 5xl) with proper header and iframe integration
+- **Quality Control**: External platform manages submission workflow and review process
 
 ### Geographic Accuracy and Position Optimization
 - **January 29, 2025**: Enhanced database accuracy from 6,365 to **5,906 insanely precise speech therapy centers**
