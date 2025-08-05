@@ -137,13 +137,13 @@ Developer credit: Display "Developed by Noel Thomas" with email link (noelsimont
 ## Recent Changes (January 2025)
 
 ### User Submission System (January 30, 2025)
-- **New Feature**: Anonymous email-based submission system
-- **Modal Interface**: "Add Center" button opens modal with email template and submission guidance
-- **Anonymous Submissions**: Users can submit new centers privately via email without public visibility
-- **Email Template**: Pre-formatted email template with all required fields for center submissions
-- **Direct Contact**: Submissions sent directly to noelsimonthomas31@gmail.com for private review
-- **User Experience**: Simple email workflow with copy-paste functionality and email client integration
-- **Privacy First**: No public submission tracking - all submissions remain private until approved
+- **New Feature**: Integrated features.vote platform via embedded modal
+- **Modal Interface**: "Add Center" button opens modal with embedded features.vote iframe
+- **External Submission**: Users submit new centers through features.vote platform within the modal
+- **Seamless Experience**: Modal overlay provides context while using external submission system
+- **Review Process**: Submissions handled through features.vote platform for tracking and approval
+- **User Interface**: Large modal (max-width 5xl) with proper header and iframe integration
+- **Quality Control**: External platform manages submission workflow and review process
 
 ### Geographic Accuracy and Position Optimization
 - **January 29, 2025**: Enhanced database accuracy from 6,365 to **5,906 insanely precise speech therapy centers**
