@@ -111,33 +111,37 @@ export default function Home() {
         const clinicState = clinic.state?.trim();
         const filterState = filters.state;
         
-        // Create state mappings for abbreviations
-        const stateMap: Record<string, string[]> = {
-          'California': ['California', 'CA', 'california', 'ca'],
-          'New York': ['New York', 'NY', 'new york', 'ny'],
-          'Texas': ['Texas', 'TX', 'texas', 'tx'],
-          'Florida': ['Florida', 'FL', 'florida', 'fl'],
-          'Illinois': ['Illinois', 'IL', 'illinois', 'il'],
-          'Georgia': ['Georgia', 'GA', 'georgia', 'ga'],
-          'North Carolina': ['North Carolina', 'NC', 'north carolina', 'nc'],
-          'Pennsylvania': ['Pennsylvania', 'PA', 'pennsylvania', 'pa'],
-          'Ohio': ['Ohio', 'OH', 'ohio', 'oh'],
-          'Michigan': ['Michigan', 'MI', 'michigan', 'mi'],
-          'New Jersey': ['New Jersey', 'NJ', 'new jersey', 'nj'],
-          'Colorado': ['Colorado', 'CO', 'colorado', 'co'],
-          'Virginia': ['Virginia', 'VA', 'virginia', 'va'],
-          'Washington': ['Washington', 'WA', 'washington', 'wa'],
-          'Arizona': ['Arizona', 'AZ', 'arizona', 'az'],
-          'Tennessee': ['Tennessee', 'TN', 'tennessee', 'tn'],
-          'Indiana': ['Indiana', 'IN', 'indiana', 'in'],
-          'Massachusetts': ['Massachusetts', 'MA', 'massachusetts', 'ma'],
-          'Maryland': ['Maryland', 'MD', 'maryland', 'md'],
-          'Missouri': ['Missouri', 'MO', 'missouri', 'mo'],
-          // Add more as needed
+        // Create comprehensive state mappings
+        const stateAbbreviations: Record<string, string> = {
+          'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
+          'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+          'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
+          'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+          'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+          'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+          'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
+          'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+          'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
+          'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
         };
         
-        const validStates = stateMap[filterState] || [filterState];
-        if (!validStates.includes(clinicState)) return false;
+        // Create reverse mapping (abbreviation to full name)
+        const abbreviationToState: Record<string, string> = {};
+        Object.entries(stateAbbreviations).forEach(([fullName, abbr]) => {
+          abbreviationToState[abbr] = fullName;
+        });
+        
+        // Check if clinic state matches filter state in any format
+        const filterStateAbbr = stateAbbreviations[filterState];
+        const filterStateFullName = abbreviationToState[filterState] || filterState;
+        
+        const clinicStateMatches = 
+          clinicState === filterState || // Exact match
+          clinicState === filterStateAbbr || // Filter is full name, clinic is abbreviation
+          clinicState === filterStateFullName || // Filter is abbreviation, clinic is full name
+          clinicState?.toLowerCase() === filterState?.toLowerCase(); // Case insensitive
+        
+        if (!clinicStateMatches) return false;
       }
       
       if (hasCostFilter && clinic.costLevel !== filters.costLevel) return false;
