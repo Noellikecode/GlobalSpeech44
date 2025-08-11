@@ -23,25 +23,25 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading, 
       try {
         // Import Leaflet
         L = await import('leaflet');
-        
+
         // Force load CSS
         const cssLoaded = new Promise<void>((resolve) => {
           if (document.querySelector('link[href*="leaflet.css"]')) {
             resolve();
             return;
           }
-          
+
           const link = document.createElement('link');
           link.rel = 'stylesheet';
           link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
           link.onload = () => resolve();
           link.onerror = () => resolve(); // Continue even if CSS fails
           document.head.appendChild(link);
-          
+
           // Fallback
           setTimeout(resolve, 1000);
         });
-        
+
         await cssLoaded;
 
         // Configure Leaflet icons without shadows
@@ -58,12 +58,12 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading, 
 
         // Create map with explicit container dimensions
         if (!mapRef.current) return;
-        
+
         // Force container size
         mapRef.current.style.width = '100%';
         mapRef.current.style.height = '100%';
         mapRef.current.style.minHeight = '500px';
-        
+
         map = L.map(mapRef.current, {
           center: [39.8283, -98.5795],
           zoom: 4,
@@ -100,11 +100,11 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading, 
         // Deployment-optimized marker management
         const maxMarkers = 1500; // Limit for deployment stability
         const displayClinics = validClinics.slice(0, maxMarkers);
-        
+
         // Batch marker creation for smooth deployment performance
         const createMarkers = () => {
           const markers = [];
-          
+
           displayClinics.forEach(clinic => {
             // Create shadowless marker icon
             const shadowlessIcon = L.icon({
@@ -116,7 +116,7 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading, 
               popupAnchor: [1, -34],
               shadowSize: [0, 0] // No shadow
             });
-            
+
             const marker = L.marker([clinic.latitude, clinic.longitude], { 
               icon: shadowlessIcon 
             })
@@ -131,28 +131,66 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading, 
                 map.setView([clinic.latitude, clinic.longitude], targetZoom);
                 onClinicClick(clinic);
               });
-            
+
             markers.push(marker);
             marker.addTo(map);
           });
-          
+
           return markers;
         };
-        
+
         const markers = createMarkers();
         console.log(`Deployment: Added ${markers.length} markers successfully`);
 
-        // Fit to markers if any exist - use sample for performance
+        // State-focused zoom logic
         if (validClinics.length > 0) {
-          // Use every 10th marker for bounds calculation to improve performance
-          const sampleClinics = validClinics.filter((_, index) => index % 10 === 0);
-          const group = new L.FeatureGroup(
-            sampleClinics.map(c => L.marker([c.latitude, c.longitude]))
-          );
-          map.fitBounds(group.getBounds(), { 
-            padding: [20, 20],
-            maxZoom: 10 // Don't zoom too close initially
-          });
+          if (selectedState && selectedState !== 'all') {
+            // Filter clinics to only those in the selected state
+            const stateClinics = validClinics.filter(clinic => {
+              // Assuming the clinic object has a state property
+              // Adjust this based on your actual data structure
+              return clinic.state === selectedState || 
+                     clinic.state?.toLowerCase() === selectedState.toLowerCase() ||
+                     clinic.address?.includes(selectedState) ||
+                     clinic.city?.includes(selectedState);
+            });
+
+            if (stateClinics.length > 0) {
+              // Create bounds from state-specific clinics only
+              const stateBounds = L.latLngBounds(
+                stateClinics.map(clinic => [clinic.latitude, clinic.longitude])
+              );
+
+              // Fit to state bounds with minimal padding and no zoom restriction
+              map.fitBounds(stateBounds, { 
+                padding: [10, 10] // Minimal padding for tighter fit
+                // Remove maxZoom to allow full zoom-in
+              });
+
+              console.log(`Zooming to ${stateClinics.length} clinics in ${selectedState}`);
+            } else {
+              console.log(`No clinics found specifically for state: ${selectedState}`);
+              // Fallback: if no state-specific clinics found, use all clinics
+              const clinicBounds = L.latLngBounds(
+                validClinics.map(clinic => [clinic.latitude, clinic.longitude])
+              );
+              map.fitBounds(clinicBounds, { 
+                padding: [20, 20]
+                // Allow natural zoom level
+              });
+            }
+          } else {
+            // No specific state selected - show all clinics (national view)
+            // Use sample for performance but keep national perspective
+            const sampleClinics = validClinics.filter((_, index) => index % 15 === 0);
+            const group = new L.FeatureGroup(
+              sampleClinics.map(c => L.marker([c.latitude, c.longitude]))
+            );
+            map.fitBounds(group.getBounds(), { 
+              padding: [40, 40],
+              maxZoom: 6 // Only restrict zoom for national view
+            });
+          }
         }
 
         // Force map to invalidate size after setup
@@ -174,7 +212,7 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading, 
         map.remove();
       }
     };
-  }, [filteredClinics, isLoading, onClinicClick]);
+  }, [filteredClinics, isLoading, onClinicClick, selectedState]); // Added selectedState to dependencies
 
   if (isLoading) {
     return (
@@ -198,7 +236,7 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading, 
           zIndex: 1
         }}
       />
-      
+
       {!mapLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-blue-100 z-10">
           <div className="text-center">
@@ -207,11 +245,16 @@ export default function MinimalMap({ filteredClinics, onClinicClick, isLoading, 
           </div>
         </div>
       )}
-      
+
       {mapLoaded && (
         <div className="absolute top-4 right-4 bg-white rounded p-2 shadow-lg z-20">
           <div className="text-sm font-medium">Speech Therapy Centers</div>
-          <div className="text-xs text-gray-600">{filteredClinics.length} locations</div>
+          <div className="text-xs text-gray-600">
+            {filteredClinics.length} locations
+            {selectedState && selectedState !== 'all' && (
+              <span className="block">in {selectedState}</span>
+            )}
+          </div>
         </div>
       )}
     </div>
