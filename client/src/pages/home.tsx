@@ -156,21 +156,9 @@ export default function Home() {
         
         if (!clinicStateMatches) return false;
         
-        // Additional coordinate validation to prevent misplaced markers
-        // Validate that coordinates are actually within the state boundaries
-        const stateBounds = getStateBounds(filterState.toLowerCase().replace(/\s+/g, '-'));
-        if (stateBounds && clinic.latitude && clinic.longitude) {
-          const { lat, lng } = stateBounds;
-          const isWithinBounds = 
-            clinic.latitude >= lat[0] && clinic.latitude <= lat[1] &&
-            clinic.longitude >= lng[0] && clinic.longitude <= lng[1];
-          
-          // If coordinates are outside state bounds, exclude the marker
-          if (!isWithinBounds) {
-            console.warn(`Clinic "${clinic.name}" in ${clinicState} has coordinates outside ${filterState} bounds:`, 
-              `${clinic.latitude}, ${clinic.longitude}`);
-            return false;
-          }
+        // Debug: Log which clinics are being included when filtering by state
+        if (hasStateFilter && filterState !== "all") {
+          console.log(`Including clinic: ${clinic.name} in ${clinicState} (${clinic.latitude}, ${clinic.longitude})`);
         }
       }
       
@@ -426,6 +414,7 @@ export default function Home() {
           filteredClinics={filteredClinics} 
           onClinicClick={setSelectedClinic}
           isLoading={isLoading}
+          selectedState={filters.state !== "all" ? filters.state : undefined}
         />
       </div>
 

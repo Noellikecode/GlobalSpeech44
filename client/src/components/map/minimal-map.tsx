@@ -6,9 +6,10 @@ interface MinimalMapProps {
   filteredClinics: Clinic[];
   onClinicClick: (clinic: Clinic) => void;
   isLoading?: boolean;
+  selectedState?: string;
 }
 
-export default function MinimalMap({ filteredClinics, onClinicClick, isLoading }: MinimalMapProps) {
+export default function MinimalMap({ filteredClinics, onClinicClick, isLoading, selectedState }: MinimalMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
