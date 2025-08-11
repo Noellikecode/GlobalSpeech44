@@ -89,7 +89,20 @@ export default function Home() {
       'alaska': { lat: [54.0, 71.5], lng: [-180.0, -130.0], center: [61.2181, -149.9003], zoom: 4 },
       'florida': { lat: [24.4, 31.0], lng: [-87.6, -80.0], center: [27.7663, -81.6868], zoom: 7 },
       'michigan': { lat: [41.7, 48.3], lng: [-90.4, -82.4], center: [44.3467, -85.4102], zoom: 6 },
-      'hawaii': { lat: [18.9, 22.2], lng: [-160.3, -154.8], center: [21.0943, -157.4983], zoom: 7 }
+      'hawaii': { lat: [18.9, 22.2], lng: [-160.3, -154.8], center: [21.0943, -157.4983], zoom: 7 },
+      'massachusetts': { lat: [41.2, 42.9], lng: [-73.5, -69.9], center: [42.2081, -71.0275], zoom: 8 },
+      'nevada': { lat: [35.0, 42.0], lng: [-120.0, -114.0], center: [38.3135, -117.0554], zoom: 6 },
+      'arizona': { lat: [31.3, 37.0], lng: [-114.8, -109.0], center: [33.7712, -111.3877], zoom: 6 },
+      'washington': { lat: [45.5, 49.0], lng: [-124.8, -116.9], center: [47.0379, -121.0187], zoom: 6 },
+      'oregon': { lat: [41.9, 46.3], lng: [-124.6, -116.5], center: [44.5672, -122.1269], zoom: 6 },
+      'colorado': { lat: [37.0, 41.0], lng: [-109.1, -102.0], center: [39.0598, -105.3111], zoom: 6 },
+      'virginia': { lat: [36.5, 39.5], lng: [-83.7, -75.2], center: [37.7693, -78.17], zoom: 7 },
+      'maryland': { lat: [37.9, 39.7], lng: [-79.5, -75.0], center: [39.0639, -76.8021], zoom: 8 },
+      'connecticut': { lat: [40.95, 42.05], lng: [-73.73, -71.78], center: [41.5978, -72.7554], zoom: 8 },
+      'tennessee': { lat: [34.98, 36.68], lng: [-90.31, -81.65], center: [35.7478, -86.7123], zoom: 7 },
+      'indiana': { lat: [37.77, 41.76], lng: [-88.1, -84.78], center: [39.8494, -86.2583], zoom: 7 },
+      'minnesota': { lat: [43.5, 49.4], lng: [-97.2, -89.5], center: [45.6945, -93.9002], zoom: 6 },
+      'wisconsin': { lat: [42.5, 47.1], lng: [-92.9, -86.8], center: [44.2619, -89.6165], zoom: 6 }
     };
     return stateBounds[state] || null;
   };
@@ -142,6 +155,23 @@ export default function Home() {
           clinicState?.toLowerCase() === filterState?.toLowerCase(); // Case insensitive
         
         if (!clinicStateMatches) return false;
+        
+        // Additional coordinate validation to prevent misplaced markers
+        // Validate that coordinates are actually within the state boundaries
+        const stateBounds = getStateBounds(filterState.toLowerCase().replace(/\s+/g, '-'));
+        if (stateBounds && clinic.latitude && clinic.longitude) {
+          const { lat, lng } = stateBounds;
+          const isWithinBounds = 
+            clinic.latitude >= lat[0] && clinic.latitude <= lat[1] &&
+            clinic.longitude >= lng[0] && clinic.longitude <= lng[1];
+          
+          // If coordinates are outside state bounds, exclude the marker
+          if (!isWithinBounds) {
+            console.warn(`Clinic "${clinic.name}" in ${clinicState} has coordinates outside ${filterState} bounds:`, 
+              `${clinic.latitude}, ${clinic.longitude}`);
+            return false;
+          }
+        }
       }
       
       if (hasCostFilter && clinic.costLevel !== filters.costLevel) return false;
